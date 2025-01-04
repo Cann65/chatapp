@@ -1,11 +1,9 @@
 package com.example.chatapp.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "app_user")
 public class User {
 
     @Id
@@ -16,7 +14,8 @@ public class User {
     private String password;
 
     // Standard-Konstruktor
-    public User() {}
+    public User() {
+    }
 
     // Konstruktor mit Parametern
     public User(String username, String password) {
