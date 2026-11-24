@@ -1,20 +1,25 @@
 package com.example.chatapp.util;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Base64;
 import java.util.Date;
 
 public class JwtUtil {
-
-    private final String secret = "mySecretKey";
-
     public String generateToken(String username) {
+        String secret = System.getenv("CHAT_JWT_SECRET");
+        if (secret == null || secret.isBlank()) {
+            throw new IllegalStateException("Set CHAT_JWT_SECRET before generating tokens");
+        }
+        Instant now = Instant.now();
         return Jwts.builder()
-            .setSubject(username)
-            .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-            .signWith(SignatureAlgorithm.HS256, secret)
+            .subject(username)
+            .issuedAt(Date.from(now))
+            .expiration(Date.from(now.plus(10, ChronoUnit.HOURS)))
+            .signWith(Keys.hmacShaKeyFor(Base64.getDecoder().decode(secret)), Jwts.SIG.HS256)
             .compact();
     }
 }
